@@ -1,13 +1,18 @@
 
 const electron = require('electron');
+const path = require('path');
 
-const { ipcRenderer } = electron;
+const { ipcRenderer, remote } = electron;
+
+const { Menu, Tray } = remote;
 
 const buttons = document.querySelectorAll('.game-button');
 
 const getDefaultBoard = () => [['', '', ''], ['', '', ''], ['', '', '']];
 
 let isX = true;
+let trayMenu = null;
+let trayIcon = null;
 
 let board = getDefaultBoard();
 let moveCount = 0;
@@ -19,11 +24,10 @@ const reset = () => {
 };
 
 const checkForWinningBoard = (board, moveCount) => {
-
   // Checking rows
   for (let x = 0; x < board.length; x++) {
-    let row = board[x];
-    let current = row[0];
+    const row = board[x];
+    const current = row[0];
     for (let i = 0; i < row.length; i++) {
       if (row[i] !== current || row[i] === '') {
         break;
@@ -35,7 +39,7 @@ const checkForWinningBoard = (board, moveCount) => {
 
   // Checking columns
   for (let i = 0; i < board.length; i++) {
-    let current = board[0][i];
+    const current = board[0][i];
     for (let x = 0; x < board.length; x++) {
       if (board[x][i] !== current || board[x][i] === '') {
         break;
@@ -56,7 +60,7 @@ const checkForWinningBoard = (board, moveCount) => {
   }
 
   current = board[0][board.length - 1];
-  for (let i = board.length -2; i >= 0; i--) {
+  for (let i = board.length - 2; i >= 0; i--) {
     if (current !== board[board.length - (1 + i)][i] || board[board.length - (1 + i)][i] === '') {
       break;
     } else if (i === 0) {
@@ -68,10 +72,10 @@ const checkForWinningBoard = (board, moveCount) => {
 };
 
 const getArrIndex = (button) => {
-  let data = button.srcElement.dataset.buttonLocation;
+  const data = button.srcElement.dataset.buttonLocation;
 
-  let x = parseInt(data.split('-')[0], 10);
-  let y = parseInt(data.split('-')[1], 10);
+  const x = parseInt(data.split('-')[0], 10);
+  const y = parseInt(data.split('-')[1], 10);
 
   return { x, y };
 };
@@ -103,3 +107,31 @@ const buttonChosen = (button) => {
 };
 
 buttons.forEach((button) => button.addEventListener('click', buttonChosen));
+
+if (process.platform === 'darwin') {
+    trayIcon = new Tray(path.join(__dirname, 'img/tray-iconTemplate.png'));
+}
+else {
+    trayIcon = new Tray(path.join(__dirname, 'img/tray-iconTemplate.png'));
+}
+
+const trayMenuTemplate = [
+  {
+    label: 'Tic Tac Toe',
+    enabled: false,
+  },
+  {
+    label: 'Restart',
+    click() {
+      reset();
+    },
+  },
+  {
+    label: 'Quit',
+    click() {
+      ipcRenderer.send('close-main-window');
+    },
+  },
+];
+trayMenu = Menu.buildFromTemplate(trayMenuTemplate);
+trayIcon.setContextMenu(trayMenu);
