@@ -1,0 +1,75 @@
+body {
+  margin:0;
+  border:0;
+}
+
+ul {
+  list-style:none;
+}
+
+button {
+  border-color: black;
+}
+
+button:active, button:focus, button:hover {
+  outline:0;
+}
+
+.board {
+  width:100%;
+  height:100%;
+  position:absolute;
+  top:0;
+  left:0;
+}
+
+.rows {
+  width:96%;
+  height:93%;
+  display:flex;
+  flex-direction:column;
+  padding:2%;
+  margin:0;
+  list-style:none;
+}
+
+.rows > li {
+  width:100%;
+  background-color:blue;
+  flex:1;
+}
+
+.columns {
+  display:flex;
+  height:100%;
+  width:100%;
+  flex-direction:row;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+
+.columns > li {
+  flex:1;
+  background-color: orange;
+}
+
+.game-button {
+  width: 100%;
+  height: 100%;
+  font-size: 20vh;
+  background-color: transparent;
+}
+
+.rows li:nth-child(1) .columns li:first-child button, .rows li:nth-child(1) .columns li:last-child button,
+.rows li:nth-child(3) .columns li:first-child button, .rows li:nth-child(3) .columns li:last-child button {
+  border-width: 0;
+}
+
+.rows li:nth-child(2) .columns li:first-child button, .rows li:nth-child(2) .columns li:last-child button {
+  border-width: 2px 0 2px 0;
+}
+
+.rows li:nth-child(1) .columns li:nth-child(2) button, .rows li:nth-child(3) .columns li:nth-child(2) button {
+  border-width: 0 2px 0 2px;
+}
